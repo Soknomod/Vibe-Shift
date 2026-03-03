@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* BASE LIGHT THEME */
+    :root {
+        --bg: #f8f9fa; --header-bg: #fff; --text: #3c4043; --border: #dadce0;
+        --row-bg: #fff; --row-hover: #f1f3f4; --note-bg: #fffbe6; --note-tab: #fef9c3;
+        --editor-bg: #fff; --editor-text: #333; --status-bg: #fff;
+        --brand-color: #5f6368;
+        --accent-glow: #00ff00;
+    }
+
+    /* DARK MODE OVERRIDES */
+    body.dark-mode {
+        --bg: #202124; --header-bg: #292a2d; --text: #e8eaed; --border: #3c4043;
+        --row-bg: #292a2d; --row-hover: #35363a; 
+        --note-bg: #1e1e1e; /* Fixed: Clean dark grey instead of brownish */
+        --note-tab: #2d2d2d; 
+        --editor-bg: #1a1b1c; --editor-text: #e8eaed; --status-bg: #292a2d;
+        --brand-color: #8ab4f8;
+    }
+
+    body, html { margin: 0; padding: 0; height: 100vh; font-family: 'Google Sans', sans-serif; background: var(--bg); overflow: hidden; color: var(--text); transition: background 0.2s; }
+    .main-wrapper { display: flex; flex-direction: column; height: 100vh; }
+    
+    .header {
+      flex: 0 0 45px; padding: 0 14px; background: var(--header-bg); font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); 
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    
+    #brand-title { color: var(--brand-color); transition: color 0.3s ease; }
+    
+    .header-right { display: flex; align-items: center; }
+    .header-icon { cursor: pointer; display: flex; align-items: center; padding: 6px; border-radius: 4px; transition: background 0.2s; margin-right: 8px; } 
+    .header-icon:hover { background: var(--row-hover); }
+    
+    #digital-clock { font-family: monospace; font-size: 12px; color: #5f6368; margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--border); }
+
+    /* HEADER BACKUP PULSE (Only for Save All) */
+    @keyframes icon-pulse {
+        0% { filter: drop-shadow(0 0 0px #00ff00); transform: scale(1); }
+        50% { filter: drop-shadow(0 0 10px #00ff00); transform: scale(1.3); }
+        100% { filter: drop-shadow(0 0 0px #00ff00); transform: scale(1); }
+    }
+    .icon-save-glow svg { fill: #00ff00 !important; transition: fill 0.2s; }
+    .icon-save-glow { animation: icon-pulse 0.6s ease-in-out; }
+
+    #slots { flex: 0 0 255px; background: var(--row-bg); border-bottom: 1px solid var(--border); z-index: 2; }
+    .row { display: flex; height: 50px; align-items: center; background: var(--row-bg); border-bottom: 1px solid var(--border); transition: background 0.4s; position: relative; overflow: hidden; }
+    
+    .pulse-active { background-color: #00ff00 !important; color: #000 !important; box-shadow: inset 0 0 20px #00ff00, 0 0 15px #00ff00; transition: all 0.3s ease; }
+    .pulse-active .btn-main { color: #000 !important; font-weight: bold; }
+
+    .btn-main { flex: 1; padding: 0 12px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: pointer; z-index: 2; }
+    .action-box { width: 34px; height: 100%; display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--border); cursor: pointer; z-index: 2; }
+
+    .lower-region { flex: 1; position: relative; background: var(--note-bg); overflow: hidden; }
+    #sticky-notes-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; z-index: 1; }
+    
+  .note-tabs-wrapper { 
+    display: flex; 
+    background: var(--note-tab); 
+    border-bottom: 1px solid var(--border); 
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+.note-tabs { 
+    display: flex; 
+    flex: 1; /* This forces the tab group to take up the remaining space */
+}
+
+.note-tab { 
+    flex: 1; /* This makes each of the 5 buttons expand to an equal width */
+    text-align: center; /* Centers the label in the wider button */
+    padding: 8px 0; 
+    font-size: 10px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    color: #9aa0a6; 
+    border-right: 1px solid var(--border); 
+    text-transform: uppercase; 
+}
+
+.note-tab.active { 
+    background: var(--note-bg); 
+    color: var(--text); 
+}
+
+.note-save-btn { 
+    padding: 0 12px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    height: 100%; 
+    transition: background 0.3s; 
+}
+
+#note-textarea { 
+    flex: 1; 
+    background: transparent; 
+    border: none; 
+    padding: 12px; 
+    font-family: 'Georgia', serif; 
+    font-size: 13px; 
+    color: var(--text); 
+    outline: none; 
+    resize: none; 
+    line-height: 1.5; 
+}
+ /* --- CONSTRAINED EDITOR BLOCK --- */
+    #editor-container {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 0; background: var(--editor-bg); 
+      border-top: 2px solid #1a73e8; display: flex; flex-direction: column; 
+      transition: height 0.2s ease-in-out; z-index: 5; overflow: hidden;
+    }
+    #editor-container.open { height: 100%; }
+    #editor-container.maximized { position: fixed; top: 45px; height: calc(100vh - 67px); z-index: 100; }
+    
+    .search-bar-container { padding: 6px 10px; background: var(--header-bg); border-bottom: 1px solid var(--border); }
+    #editor-search { width: 100%; border: 1px solid var(--border); padding: 6px; font-size: 11px; border-radius: 4px; outline: none; background: var(--bg); color: var(--text); box-sizing: border-box;}
+    
+    .editor-body { flex: 1; position: relative; overflow: hidden; background: var(--editor-bg); }
+    
+    #editor-textarea, #editor-mirror {
+        width: 100% !important; /* Constrains to your window width */
+        height: 100%; border: none; padding: 12px; 
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace; 
+        font-size: 13px; line-height: 1.5; letter-spacing: 0px;
+        outline: none; resize: none; box-sizing: border-box; 
+        
+        /* THE FIX: Auto-wrap text, no horizontal expansion */
+        white-space: pre-wrap; 
+        word-wrap: break-word;
+        
+        position: absolute; top: 0; left: 0; margin: 0;
+        tab-size: 4; -moz-tab-size: 4;
+        
+        /* STEALTH SCROLL: Keep scrolling alive for search centering, but hide the bars */
+        overflow-y: scroll;
+        overflow-x: hidden;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    /* Hide scrollbars for Chrome, Brave, Safari */
+    #editor-textarea::-webkit-scrollbar, 
+    #editor-mirror::-webkit-scrollbar {
+        display: none;
+    }
+
+    #editor-textarea { background: transparent; z-index: 2; color: var(--editor-text); caret-color: #1a73e8; }
+    #editor-mirror { z-index: 1; color: transparent !important; background: var(--editor-bg); pointer-events: none; }
+    
+    .find-result { background-color: rgba(255, 235, 59, 0.4) !important; color: inherit !important; border-radius: 2px; box-shadow: 0 0 0 1px rgba(255, 214, 0, 0.5); }
+    body.dark-mode .find-result { background-color: rgba(0, 255, 255, 0.2) !important; color: #ffffff !important; border-radius: 2px; box-shadow: 0 0 8px rgba(0, 255, 255, 0.6); border-bottom: 1px solid rgba(0, 255, 255, 0.8); }
+
+    .editor-head { padding: 8px 12px; background: var(--header-bg); font-size: 10px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
+    .ctrl-btn { cursor: pointer; color: #9aa0a6; font-family: monospace; font-size: 18px; font-weight: bold; padding: 0 10px; }
+    
+    .save-bar { padding: 8px; display: flex; background: var(--header-bg); border-top: 1px solid var(--border); }
+    .save-btn { flex: 1; background: #1a73e8; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+    .save-btn.success-glow { background: #00ff00 !important; color: #000 !important; box-shadow: 0 0 15px #00ff00; }
+    
+    .status-bar { 
+        flex: 0 0 22px; font-size: 10px; line-height: 22px; text-align: center; 
+        border-top: 1px solid var(--border); background: var(--status-bg); 
+        color: #9aa0a6; z-index: 200; transition: all 0.3s ease; 
+    }
+    
+    .status-glow { background: #00ff00 !important; color: #000 !important; font-weight: bold; box-shadow: 0 -4px 15px rgba(0, 255, 0, 0.4); }
+
+    .icon-svg { fill: #9aa0a6; }
+    body.dark-mode .icon-svg { fill: #e8eaed; }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+<div class="header">
+    <div class="header-left" style="display: flex; align-items: center; gap: 8px;">
+        <button id="clear-all-links" style="background: transparent; border: 1px solid var(--border); color: #9aa0a6; font-size: 9px; padding: 3px 8px; cursor: pointer; text-transform: uppercase; font-family: 'Google Sans', sans-serif; border-radius: 3px; font-weight: bold; transition: all 0.2s;">Clear Links</button>
+
+        <div id="pro-unlock-zone" style="display: flex; align-items: center; gap: 5px; border-left: 1px solid var(--border); padding-left: 8px; margin-left: 2px;">
+            <input type="text" id="license-key" placeholder="CODE" 
+                   style="width: 50px; padding: 2px 5px; font-size: 9px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg); color: var(--text); outline: none; height: 16px;">
+            <button id="activate-btn" 
+                    style="background: #1a73e8; color: #ffffff; border: none; padding: 3px 8px; font-size: 9px; font-weight: bold; border-radius: 3px; cursor: pointer; text-transform: uppercase; line-height: 1;">
+                Unlock
+            </button>
+            <span id="status-text" style="display:none;">LOCKED</span>
+        </div>
+    </div>
+
+    <span id="brand-title"></span>
+
+    <div class="header-right">
+        <div class="header-icon" id="theme-toggle" title="Toggle Dark Mode">
+            <svg viewBox="0 0 24 24" width="18" height="18" class="icon-svg"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+        </div>
+        <div class="header-icon" id="header-backup-btn" title="Backup All" style="margin-right: 11px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" class="icon-svg">
+                <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+            </svg>
+        </div>
+        <span id="digital-clock">00:00:00</span>
+    </div>
+</div>
+    <div id="slots"></div>
+    <div class="lower-region">
+        <div id="sticky-notes-container">
+       <div class="note-tabs-wrapper">
+<div class="note-tabs" id="note-tabs">
+    <div class="note-tab active" data-tab="1">Note 1</div>
+    <div class="note-tab" data-tab="2">Note 2</div>
+    <div class="note-tab" data-tab="3">Note 3</div>
+    <div class="note-tab" data-tab="4">Note 4</div>
+    <div class="note-tab" data-tab="5">Note 5</div>
+</div>
+  <div class="note-save-container" style="position: relative; display: flex;">
+    <div class="note-save-btn" id="note-save-trigger">
+      <svg viewBox="0 0 24 24" width="16" height="16" class="icon-svg" style="fill:#857b26"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+    </div>
+    <div id="note-save-menu" style="display: none; position: absolute; right: 0; top: 100%; background: var(--header-bg); border: 1px solid var(--border); z-index: 100; min-width: 140px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); flex-direction: column;">
+      <div id="save-current-opt" style="padding: 10px; font-size: 10px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text);">SAVE CURRENT NOTE</div>
+      <div id="save-all-opt" style="padding: 10px; font-size: 10px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text);">SAVE ALL NOTES</div>
+      <div id="cancel-save-opt" style="padding: 10px; font-size: 10px; cursor: pointer; color: #ea4335;">CANCEL</div>
+    </div>
+  </div>
+</div>
+          <textarea id="note-textarea" placeholder="Type here..."></textarea>
+        </div>
+        <div id="editor-container">
+          <div class="search-bar-container"><input type="text" id="editor-search" placeholder="Search... (Enter to cycle)"></div>
+          <div class="editor-head">
+            <span id="editing-filename">EDITOR</span>
+            <div><span class="ctrl-btn" id="btn-max">±</span><span class="ctrl-btn" id="btn-min">×</span></div>
+          </div>
+          <div class="editor-body">
+              <div id="editor-mirror"></div>
+              <textarea id="editor-textarea" spellcheck="false" wrap="off"></textarea>
+          </div>
+          <div class="save-bar"><button class="save-btn" id="editor-save-btn">SAVE TO FILE</button></div>
+        </div>
+    </div>
+    <div class="status-bar" id="status">Ready</div>
+  </div>
+
+
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
