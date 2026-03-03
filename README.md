@@ -5,6 +5,17 @@ VIBE SHIFT is a high-performance, local-first developer tool designed to bridge 
 
 ---
 
+## 💎 UNLOCK THE PRO ENGINE
+The version in this repository is the **Standard Edition**. To unlock the full potential of the Vibe-Shift system, upgrade to **PRO** to access:
+
+* **5 Active File Slots:** Manage entire components or multi-file scripts simultaneously.
+* **Pro Note Engine:** 5 persistent, renameable tabs for master-level organization.
+* **Master Backup Logic:** Export all your notes and linked file manifests in one click.
+
+### [👉 GET YOUR PRO ACTIVATION KEY HERE](INSERT_YOUR_STRIPE_LINK_HERE)
+
+---
+
 ## 🛠 INSTALLATION & SETUP
 1. **Download:** Clone or download this project folder to your machine.
 2. **Load:** Open `chrome://extensions/` in your browser and enable **Developer Mode**.
@@ -28,12 +39,13 @@ VIBE SHIFT is a high-performance, local-first developer tool designed to bridge 
 * **Height Toggle:** Click the **○ (Circle)** symbol to raise the console to full height. Click again to minimize to half-height.
 * **Exit:** Click the **(×)** icon within the console header to close the editor entirely.
 
-### 3. The Smart Note Engine
+### 3. The Smart Note Engine (PRO Enabled)
 * **Persistence:** Notes stay alive even when you "Clear All Links." They only vanish when you manually delete the text.
 * **Renaming:** Double-click a tab title, type your new name, and click away to save.
-* **Smart Export:**
-  * **Save Current:** Saves the active note as a `.txt` file using the custom title you gave the tab.
-  * **Save All:** Bundles all 5 tabs into a single, organized text file with your custom titles acting as clear dividers.
+* **Smart Export & Backups:**
+  * **Save Current:** Saves the active note as a `.txt` file using your custom title.
+  * **Master Backup:** Bundles all 5 tabs into a single `VIBE_SHIFT_NOTES_MASTER_BACKUP.txt`.
+  * **Header Backup:** Exports a manifest of all linked file contents with `BK_` safety prefixing.
 
 ---
 
@@ -55,4 +67,4 @@ Vibe Coding is about **endurance**. Getting lost in a sea of open tabs and "Unti
 We are heading into amazing times. The horizon is shining with new opportunity in the exploding field of Vibe Coding. **Stay in the flow. Stay in the vibe.**
 
 ---
-*(C) 2026 Andrew Domonkos | Proprietary & Confidential*
+*(C) 2026 Andrew Domonkos | Vibe Shift Systems*
