@@ -12,7 +12,7 @@ The version in this repository is the **Standard Edition**. To unlock the full p
 * **Pro Note Engine:** 5 persistent, renameable tabs for master-level organization.
 * **Master Backup Logic:** Export all your notes and linked file manifests in one click.
 
-### [👉 GET YOUR PRO ACTIVATION KEY HERE](INSERT_YOUR_STRIPE_LINK_HERE)
+### [👉 GET YOUR PRO ACTIVATION KEY HERE]([INSERT_YOUR_STRIPE_LINK_HERE](https://buy.stripe.com/28E4gyfxw2v34k1asm0kE00))
 
 ---
 
